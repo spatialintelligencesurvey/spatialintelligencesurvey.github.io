@@ -3,139 +3,211 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Spatial Intelligence Survey — website coming soon.">
-  <title>Spatial Intelligence Survey</title>
+  <meta name="description" content="A survey of spatial intelligence benchmarks, evaluated capabilities, evaluation protocols, and data sources.">
+  <title>A Survey of Spatial Intelligence Benchmarks</title>
   <style>
-    :root {
-      color-scheme: dark;
-      --bg: #090d18;
-      --surface: rgba(20, 29, 49, 0.72);
-      --text: #f4f7ff;
-      --muted: #a8b3ca;
-      --accent: #7dd3fc;
-      --accent-2: #a78bfa;
-      --border: rgba(255, 255, 255, 0.12);
-    }
-
-    * { box-sizing: border-box; }
-
+    :root { color-scheme: light; }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
-      min-height: 100vh;
       margin: 0;
-      display: grid;
-      place-items: center;
-      overflow: hidden;
-      color: var(--text);
-      background:
-        radial-gradient(circle at 20% 20%, rgba(125, 211, 252, 0.15), transparent 32rem),
-        radial-gradient(circle at 80% 75%, rgba(167, 139, 250, 0.14), transparent 30rem),
-        var(--bg);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #fff;
+      color: #242424;
+      font: 17px/1.75 Georgia, "Times New Roman", serif;
+      -webkit-font-smoothing: antialiased;
     }
-
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      opacity: 0.3;
-      background-image:
-        linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
-      background-size: 48px 48px;
-      mask-image: linear-gradient(to bottom, black, transparent 85%);
+    .container { max-width: 880px; margin: 0 auto; padding: 56px 28px 100px; }
+    h1, h2, h3, h4 { color: #171717; line-height: 1.32; }
+    h1 { margin: 0 0 40px; font-size: clamp(28px, 4vw, 40px); font-weight: 700; }
+    h2 { margin: 54px 0 18px; padding-bottom: 8px; border-bottom: 1px solid #ddd; font-size: 27px; }
+    h3 { margin: 36px 0 14px; font-size: 22px; }
+    h4 { margin: 27px 0 10px; font-size: 19px; }
+    p { margin: 0 0 18px; }
+    li { margin-bottom: 9px; }
+    ul, ol { padding-left: 26px; margin: 12px 0 22px; }
+    a { color: #1757a6; text-decoration: none; }
+    a:hover, a:focus-visible { text-decoration: underline; }
+    strong { font-weight: 700; }
+    .toc {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0 0 46px;
+      padding: 18px 0 20px;
+      border-top: 1px solid #ddd;
+      border-bottom: 1px solid #ddd;
+      font-size: 14px;
+      line-height: 1.5;
     }
-
-    main {
-      position: relative;
-      width: min(720px, calc(100% - 32px));
-      padding: clamp(36px, 7vw, 72px);
-      border: 1px solid var(--border);
-      border-radius: 28px;
-      background: var(--surface);
-      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(18px);
-      text-align: center;
+    .toc h2 { font-size: 17px; border: 0; padding: 0; margin: 0 0 12px; }
+    .toc ul { list-style: none; padding: 0; margin: 0; }
+    .toc li { margin: 4px 0; }
+    .toc .subsection { padding-left: 18px; }
+    .toc a { color: #3b4857; }
+    .toc a:hover { color: #1757a6; }
+    #references ~ p { font-size: 15px; line-height: 1.6; overflow-wrap: anywhere; }
+    :target { scroll-margin-top: 24px; }
+    @media (max-width: 600px) {
+      body { font-size: 16px; line-height: 1.7; }
+      .container { padding: 30px 18px 64px; }
+      h1 { margin-bottom: 26px; }
+      h2 { font-size: 23px; margin-top: 42px; }
+      h3 { font-size: 20px; }
+      .toc { margin-bottom: 32px; }
     }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      margin: 0 0 24px;
-      color: var(--accent);
-      font-size: 0.76rem;
-      font-weight: 700;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-    }
-
-    .eyebrow::before {
-      content: "";
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 18px var(--accent);
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(2.5rem, 8vw, 5.25rem);
-      line-height: 0.98;
-      letter-spacing: -0.055em;
-    }
-
-    h1 span {
-      color: transparent;
-      background: linear-gradient(110deg, var(--accent), var(--accent-2));
-      background-clip: text;
-      -webkit-background-clip: text;
-    }
-
-    .description {
-      max-width: 520px;
-      margin: 26px auto 0;
-      color: var(--muted);
-      font-size: clamp(1rem, 2.5vw, 1.15rem);
-      line-height: 1.7;
-    }
-
-    .status {
-      display: inline-block;
-      margin-top: 34px;
-      padding: 11px 18px;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      color: #dbe4f5;
-      background: rgba(255, 255, 255, 0.045);
-      font-size: 0.9rem;
-    }
-
-    @media (max-width: 520px) {
-      main { border-radius: 22px; }
-      h1 { font-size: clamp(2.4rem, 14vw, 4rem); }
-      .description br { display: none; }
-    }
-
-    @media (prefers-reduced-motion: no-preference) {
-      main { animation: arrive 700ms ease-out both; }
-      @keyframes arrive {
-        from { opacity: 0; transform: translateY(14px) scale(0.985); }
-        to { opacity: 1; transform: translateY(0) scale(1); }
-      }
+    @media print {
+      .container { max-width: none; padding: 0; }
+      .toc { display: none; }
+      a { color: inherit; }
+      h2, h3, h4 { break-after: avoid; }
     }
   </style>
 </head>
 <body>
-  <main>
-    <p class="eyebrow">Coming soon</p>
-    <h1>Spatial<br><span>Intelligence</span></h1>
-    <p class="description">
-      A survey of research, benchmarks, and emerging ideas<br>
-      in spatial intelligence.
-    </p>
-    <div class="status">Website under construction</div>
+  <main class="container">
+    <article>
+      <!-- Complete article rendered from my_scripts.md. -->
+      <h1 id="a-survey-of-spatial-intelligence-benchmarks">A Survey of Spatial Intelligence Benchmarks</h1>
+<nav class="toc" aria-label="Table of contents"><h2>Contents</h2><ul>
+<li class="section"><a href="#1-introduction">1. Introduction</a></li>
+<li class="section"><a href="#2-background">2. Background</a></li>
+<li class="subsection"><a href="#multimodal-large-language-models">Multimodal Large Language Models</a></li>
+<li class="subsection"><a href="#from-images-to-dynamic-observations">From Images to Dynamic Observations</a></li>
+<li class="subsection"><a href="#from-perception-to-interaction">From Perception to Interaction</a></li>
+<li class="section"><a href="#3-taxonomy-of-spatial-intelligence-evaluation">3. Taxonomy of Spatial Intelligence Evaluation</a></li>
+<li class="subsection"><a href="#31-input-modalities-and-interfaces">3.1 Input Modalities and Interfaces</a></li>
+<li class="subsection"><a href="#32-evaluated-capabilities">3.2 Evaluated Capabilities</a></li>
+<li class="subsection"><a href="#33-evaluation-protocols">3.3 Evaluation Protocols</a></li>
+<li class="subsection"><a href="#34-data-sources">3.4 Data Sources</a></li>
+<li class="section"><a href="#4-discussion">4. Discussion</a></li>
+<li class="subsection"><a href="#41-general-progress-does-not-guarantee-spatial-competence">4.1 General Progress Does Not Guarantee Spatial Competence</a></li>
+<li class="subsection"><a href="#42-from-answering-questions-to-acting">4.2 From Answering Questions to Acting</a></li>
+<li class="subsection"><a href="#43-synthetic-advantages-may-not-transfer-to-real-data">4.3 Synthetic Advantages May Not Transfer to Real Data</a></li>
+<li class="section"><a href="#references">References</a></li>
+</ul></nav>
+<h2 id="1-introduction">1. Introduction</h2>
+<p>Recent advances in frontier models have led to remarkable progress across language, coding, and multimodal understanding tasks. OpenAI reports that GPT-6 Astra achieves 99.9% on ARC-AGI-3 and 97.6% on FrontierMath Tier 4 (v2), rounded to 98% in its overview [1]. Google DeepMind reports that Gemini 4 Argon achieves 91.7% on LVBench and 91.9% on Vibe Code Bench [2]. These results demonstrate strong performance on specific evaluations, but do not by themselves establish the ability to perceive, represent, generate, and reason about the physical world.</p>
+<p>Spatial Intelligence is the ability to understand and reason about the three-dimensional physical world. Physical problems, such as precisely manipulating objects with robotic grippers, reconstructing geometrically consistent 3D environments from partial observations, and memorizing entire environments for navigation, require strong spatial intelligence.</p>
+<p>To better understand the current progress and limitations of spatial intelligence, we survey representative spatial intelligence benchmarks, categorize them from different perspectives, and identify key challenges and future research directions.</p>
+<p>Specifically, we categorize representative benchmarks from four perspectives: <strong>(1) input modalities and interfaces</strong>, including images, videos, structured 3D data, and environment interfaces; <strong>(2) evaluated capabilities</strong>, such as spatial measurement, relational reasoning, motion tracking, spatial memory, physical reasoning, prediction, and planning; <strong>(3) evaluation protocols</strong>, including static, streaming, and interactive settings; and <strong>(4) data sources</strong>, including real-world, synthetic, and hybrid environments.</p>
+<p>Based on this taxonomy, we compare representative benchmarks, analyze their coverage and limitations, and highlight underexplored capabilities and open challenges in spatial intelligence evaluation.</p>
+<h2 id="2-background">2. Background</h2>
+<h3 id="multimodal-large-language-models">Multimodal Large Language Models</h3>
+<p>Early visual foundation models, such as CLIP [3] and DINO [4], established strong visual representations through contrastive and self-supervised learning. Building on these foundations, multimodal large language models (MLLMs), such as LLaVA [5], integrated visual encoders with large language models, enabling image understanding and visual question answering.</p>
+<p>Subsequent models extended multimodal understanding from single images to videos, enabling the understanding of temporal events, object motion, and dynamic scenes. Models such as Video-LLaVA [6] and LLaVA-OneVision [7] further enhanced video understanding across multiple frames. Beyond general-purpose visual understanding, specialized models have been developed to enhance specific spatial capabilities. For example, SpatialVLM [8] focuses on quantitative spatial reasoning, including distance and object size estimation, while DepthVLM [9] incorporates metric depth estimation into vision-language models.</p>
+<p>Together, these developments have expanded multimodal understanding from static visual perception toward temporal and three-dimensional spatial understanding.</p>
+<h3 id="from-images-to-dynamic-observations">From Images to Dynamic Observations</h3>
+<p>The inputs of multimodal models have expanded from static images to videos and explicit 3D representations. We broadly summarize these modalities into three categories:</p>
+<ol>
+<li><strong>Images:</strong> Single or multiple RGB images, providing static visual information from one or more viewpoints.</li>
+<li><strong>Videos:</strong> Sequences of temporally ordered frames, typically represented as sampled frames or continuous video clips.</li>
+<li><strong>3D and Multisensor Data:</strong> Inputs incorporating explicit spatial or sensor information, such as RGB-D images, depth maps, point clouds, meshes, LiDAR, and camera poses.</li>
+</ol>
+<p>These modalities can be provided as fixed inputs, delivered incrementally, or acquired through interaction. Continuous observation describes how information becomes available over time, rather than a separate modality: both RGB video and RGB-D sequences can be streamed. We therefore discuss streaming and interactive access under evaluation protocols in Section 3.3.</p>
+<h3 id="from-perception-to-interaction">From Perception to Interaction</h3>
+<p>The capabilities of multimodal large language models (MLLMs) range from basic visual perception to complex reasoning and interaction with the physical world. We broadly organize them into three categories:</p>
+<ol>
+<li><strong>Perception and Understanding:</strong> Recognizing and understanding visual content, including object recognition, attribute recognition, classification, counting, detection, visual grounding, semantic understanding, spatial understanding, and temporal understanding. For example, identifying objects in an image, estimating distances between objects, determining relative positions, recognizing human emotions and intentions, or tracking object motion in a video.</li>
+<li><strong>Reasoning and Prediction:</strong> Inferring information beyond direct observations through logical reasoning, commonsense reasoning, spatial and physical reasoning, causal inference, and prediction. For example, reasoning about why a person is standing on a chair, inferring hidden spatial relationships, predicting future object movements, or evaluating counterfactual scenarios.</li>
+<li><strong>Planning and Interaction:</strong> Applying perception, understanding, and reasoning to goal-directed tasks, including navigation, robotic manipulation, action planning, and active exploration. For example, planning a collision-free path, manipulating objects to achieve a goal, or actively exploring an unfamiliar environment to locate a target.</li>
+</ol>
+<h2 id="3-taxonomy-of-spatial-intelligence-evaluation">3. Taxonomy of Spatial Intelligence Evaluation</h2>
+<p>Existing spatial intelligence benchmarks vary substantially in their inputs, evaluated capabilities, task designs, and evaluation settings. To organize these benchmarks, we propose a taxonomy from four perspectives: <strong>(1) Input Modalities and Interfaces, (2) Evaluated Capabilities, (3) Evaluation Protocols, and (4) Data Sources.</strong></p>
+<p>These perspectives address four fundamental questions: <strong>What information and interfaces are provided to the model? What spatial capabilities are being evaluated? How is the evaluation conducted? Where does the evaluation data come from?</strong></p>
+<h3 id="31-input-modalities-and-interfaces">3.1 Input Modalities and Interfaces</h3>
+<p>We first categorize spatial intelligence benchmarks according to the input information provided to models. Different modalities provide different levels of spatial, geometric, and temporal information, which directly influence the capabilities that can be evaluated.</p>
+<p><strong>Image-based Input.</strong> Image-based benchmarks provide a single image or multiple discrete images. Although images primarily contain two-dimensional visual information, they can be used to evaluate three-dimensional spatial understanding, such as depth estimation, object orientation, and spatial relationships. For example, 3DSRBench [34] evaluates 3D spatial reasoning from natural images, covering object height, orientation, location, and multi-object relationships. NuScenes-SpatialQA [46] extends image-based spatial QA to driving scenes, using 3D annotations to construct questions about visible objects. SpaceCast-Bench [28] uses scene observations together with specified transformations to ask about spatial relations after an unobserved change.</p>
+<p><strong>Video-based Input.</strong> Video-based benchmarks provide temporally ordered frames, allowing spatial information to be accumulated across time and changing viewpoints. Representative benchmarks include VSI-Bench [59], STI-Bench [32], and MMSI-Video-Bench [33]. These benchmarks cover tasks such as geometric measurement, motion understanding, spatial memory, and prediction. S³-Bench [50] uses temporally arriving visual observations for spatial QA. Video can also specify a reconstruction target: 4DCodeBench [41] and PhysCodeGym [40] ask coding agents to reproduce observed dynamic scenes as executable programs.</p>
+<p><strong>3D and Multisensor Input.</strong> These benchmarks provide explicit geometric information or additional sensor measurements, such as depth maps, RGB-D images, point clouds, LiDAR, camera poses, and 3D scene representations. For example, ScanRefer [72] uses 3D point clouds and natural language descriptions for object localization. Such inputs enable more direct evaluation of geometric and spatial understanding than RGB-only observations. Geometry used to construct ground-truth answers must be distinguished from geometry supplied to a model; the use of nuScenes 3D annotations in NuScenes-SpatialQA [46] does not by itself make its VLM input a LiDAR input.</p>
+<p><strong>Interactive Environments.</strong> In addition to fixed inputs, some benchmarks provide an environment interface through which models acquire observations by taking actions. For example, MazeBench: Visual Spatial Reasoning in a 3D Open World [73] evaluates agents navigating a three-dimensional maze and solving box-pushing puzzles to open routes. The environment interface determines how observations are obtained; the observation modality must still be specified separately. MazeBench offers visual, ASCII, and JSON tracks, which should be distinguished when comparing results (official evaluation description [74]). The simulated component of S³-Bench [50] similarly allows agents to acquire additional views. WorldCoder [45] illustrates a different interface: symbolic environment states, actions, and rewards, together with task goals, support program synthesis and planning. These symbolic inputs should be distinguished from RGB observations. The corresponding action–observation loop is discussed in Section 3.3.</p>
+<h3 id="32-evaluated-capabilities">3.2 Evaluated Capabilities</h3>
+<p>Following the progression from perception to interaction introduced in Section 2, we organize spatial capabilities into three categories: <strong>Perception and Understanding</strong>, <strong>Reasoning and Prediction</strong>, and <strong>Planning and Interaction</strong>. They distinguish extracting and integrating spatial information, inferring consequences and relationships, and selecting actions toward a goal. This progression is an organizing framework, not a claim that models follow a fixed internal pipeline. Tasks may involve several categories, and benchmarks are classified at the task level.</p>
+<h4 id="321-perception-and-understanding">3.2.1 Perception and Understanding</h4>
+<p>This category evaluates whether models can extract, estimate, and integrate spatial information from available observations, including observations acquired at earlier times or from different viewpoints. The target is the observed environment's state and history.</p>
+<ul>
+<li><strong>Perception and Grounding:</strong> Identifying objects and locating them within a scene. Typical tasks include object recognition, object counting, 2D/3D localization, and language-guided grounding. ScanRefer [72], for example, evaluates localization of objects in 3D scans from natural language descriptions.</li>
+<li><strong>Measurement and Spatial Relations:</strong> Estimating spatial properties and identifying relations in the observed scene, including depth, distance, object dimensions, orientation, and relative position. Representative tasks include spatial comparisons in 3DSRBench [34], measurement in VSI-Bench [59] and STI-Bench [32], and distance and offset questions in NuScenes-SpatialQA [46]. The static-perception tasks of SpaceCast-Bench [28] also belong here.</li>
+<li><strong>Tracking and Motion Understanding:</strong> Following objects and camera movement across observations, including motion direction, displacement, trajectories, and temporal ordering. VLM4D [67] evaluates motion understanding, while STI-Bench [32] includes quantitative spatiotemporal tasks.</li>
+<li><strong>Spatial Memory and Mapping:</strong> Retaining, retrieving, and integrating spatial evidence across time and viewpoints. Typical tasks include recalling out-of-view objects, recognizing revisited locations, and assembling a spatial representation from partial views. Relevant tasks appear in VSI-Bench [59], OVO-S-Bench [31], Stream3D-Bench [60], and S³-Bench [50]. Their access to past observations differs, so success must be interpreted under the corresponding memory and observation protocol.</li>
+</ul>
+<h4 id="322-reasoning-and-prediction">3.2.2 Reasoning and Prediction</h4>
+<p>This category evaluates whether models can use spatial information to derive conclusions through multi-step relational inference, causal reasoning, or hypothetical transformations. Perceptual estimation can itself require inference; the distinction here concerns the task's target operation rather than an assumption that perception is inference-free.</p>
+<ul>
+<li><strong>Spatial Relational Reasoning:</strong> Combining spatial relations or transforming reference frames to infer relationships beyond a direct reading of the supplied observations. NuScenes-SpatialQA [46] explicitly distinguishes spatial understanding from multi-hop reasoning. Its reasoning tasks therefore belong here even though other tasks in the same benchmark fall under perception and understanding.</li>
+<li><strong>Physical and Causal Reasoning:</strong> Inferring how physical constraints and interactions determine events, including contact, collisions, gravity, and support. CLEVRER [58], for example, includes explanatory questions about causal relationships between collision events.</li>
+<li><strong>Prediction and Counterfactual Reasoning:</strong> Inferring future states or outcomes under specified changes. Physion [5] evaluates future contact from an observed video prefix, while CLEVRER [58] includes predictive and counterfactual event questions. SpaceCast-Bench [28] evaluates local and global spatial predictions under prescribed transformations, such as moving an object or rotating a scene. These geometric transformations should be distinguished from physical dynamics prediction. PhysCodeGym [40] assesses physical validity partly through controlled re-simulation of reconstructed scenes under altered conditions.</li>
+</ul>
+<p>Recalling an earlier observation belongs to spatial memory; predicting a state that has not been observed belongs here. Similarly, waiting for a future event to become visible before answering, as permitted by some Stream3D-Bench tasks [60], should be distinguished from predicting that event without seeing it.</p>
+<h4 id="323-planning-and-interaction">3.2.3 Planning and Interaction</h4>
+<p>This category evaluates whether models can use spatial information and inferred consequences to select actions, achieve goals, acquire evidence, and adapt to feedback.</p>
+<ul>
+<li><strong>Planning and Action Selection:</strong> Determining actions or action sequences under spatial constraints, including route planning, navigation, manipulation planning, and reachability reasoning. MazeBench [73] requires agents to navigate and push boxes to open routes. PHYRE [4] evaluates physical action selection: an agent places one or two balls so that the resulting simulation satisfies a target contact condition. WorldCoder [45] illustrates model-based planning using learned Python transition and reward functions in environments including Sokoban and MiniGrid.</li>
+<li><strong>Active Exploration:</strong> Choosing actions to acquire missing spatial information, such as changing viewpoint to inspect an occluded object. The simulated component of S³-Bench [50] allows agents to move, rotate, or scan to gather evidence for spatial questions. Its real-world videos follow fixed trajectories and do not provide the same action permissions.</li>
+<li><strong>Feedback-Based Adaptation:</strong> Using action outcomes to revise an environment model or subsequent action choices. PHYRE [4] provides feedback across action trials. WorldCoder [45] uses collected transitions to revise its executable model and support subsequent planning. WorldCoder is a method evaluated on existing environments, rather than a standalone spatial benchmark.</li>
+</ul>
+<p><strong>Executable Modeling Across Stages.</strong> Executable environment modeling connects these three categories. Reconstructing scene geometry and observed motion supports perception and understanding; using a model to infer unobserved outcomes supports reasoning and prediction; and using its simulated consequences to select actions supports planning and interaction. 4DCodeBench [41] emphasizes reconstruction of dynamic scenes from reference videos as executable graphics programs. PhysCodeGym [40] additionally evaluates physical validity through native-scene inspection and interventions. WorldCoder [45] connects model construction and revision to action planning.</p>
+<p>These mappings depend on what is evaluated. A program that reproduces a reference trajectory does not by itself demonstrate reliable prediction under changed conditions. Iterative code execution and render inspection also provide development feedback without necessarily giving the agent new observations of the reference world. Reconstruction quality, intervention validity, and downstream action success should therefore remain separate evaluation targets.</p>
+<h3 id="33-evaluation-protocols">3.3 Evaluation Protocols</h3>
+<p>Spatial intelligence benchmarks also differ in how models receive observations, when they are required to respond, and what outputs they must produce.</p>
+<h4 id="331-observation-access-and-interaction">3.3.1 Observation Access and Interaction</h4>
+<p>Observation protocols specify which evidence a model may access and whether it can influence what it observes. A single-image task has no temporal arrival process, so the distinction between offline and streaming evaluation is relevant primarily to sequential observations. We distinguish the following settings:</p>
+<ul>
+<li><strong>Static-input Evaluation:</strong> Models receive a fixed image, image set, or 3D representation and answer without obtaining new observations through actions. For example, 3DSRBench [34] evaluates spatial reasoning from supplied images.</li>
+<li><strong>Offline Sequence Evaluation:</strong> Models receive the prescribed video clip or sampled frames before answering. For example, VSI-Bench [59] and STI-Bench [32] evaluate reasoning over prerecorded sequences. Access to the supplied sequence does not imply access to every frame of the source video.</li>
+<li><strong>Incremental Sequence Evaluation:</strong> Observations become available over time. Evaluation must distinguish prefix-only access, where a model may reread the available history, from stateful streaming, where it processes incoming observations while maintaining state. OVO-S-Bench [31] includes distinct prefix and streaming settings. Stream3D-Bench [60] also evaluates when models respond; waiting for a future observation before answering is different from predicting an unseen future state.</li>
+<li><strong>Interactive Evaluation:</strong> Models select actions that affect subsequent observations or environmental states, creating an action–observation loop. Examples include active exploration in the simulated component of S³-Bench [50] and action trials with simulation feedback in PHYRE [4].</li>
+</ul>
+<p>These settings describe access conditions rather than mutually exclusive modalities. An interactive agent may receive images incrementally, while a video benchmark may provide either a fixed clip or a stream. Comparisons should report observation access, history or memory limits, response timing, and action budgets separately. In 4DCodeBench [41] and PhysCodeGym [40], the reference video is fixed, while agents may iteratively write code, execute it, and inspect the generated scene or rendering. This development feedback is distinct from acquiring new observations of the reference world. WorldCoder [45], by contrast, collects new environment transitions through its actions and uses them to revise its model.</p>
+<h4 id="332-output-formats">3.3.2 Output Formats</h4>
+<p>Benchmarks can also be categorized by their required outputs:</p>
+<ul>
+<li><strong>Question Answering:</strong> Multiple-choice answers, short text, or free-form explanations, as in the spatial QA tasks of NuScenes-SpatialQA [46], S³-Bench [50], and SpaceCast-Bench [28].</li>
+<li><strong>Numerical Estimation:</strong> Distances, dimensions, angles, coordinates, and physical quantities.</li>
+<li><strong>Structured Prediction:</strong> Bounding boxes, camera poses, object trajectories, scene graphs, or 3D geometric representations.</li>
+<li><strong>Action Generation:</strong> Navigation actions, exploration actions, or manipulation plans, as in the simulated active-exploration setting of S³-Bench [50].</li>
+<li><strong>Executable Program Generation:</strong> Graphics and simulation programs representing scene geometry and dynamics, as in 4DCodeBench [41] and PhysCodeGym [40]. WorldCoder [45] generates transition and reward functions that a separate planner uses to select actions.</li>
+</ul>
+<h4 id="333-evaluation-targets-and-metrics">3.3.3 Evaluation Targets and Metrics</h4>
+<p>The output format alone does not determine what a score demonstrates. NuScenes-SpatialQA [46] separates qualitative relations from quantitative measurements, while SpaceCast-Bench [28] distinguishes performance across transformation levels and task types. For S³-Bench [50], spatial answer quality and the conditions under which additional evidence can be acquired must both be reported. For executable reconstruction, 4DCodeBench [41] evaluates rendered appearance and recovered geometry over time, with different reference information available for real and synthetic scenes. PhysCodeGym [40] further separates visual and event agreement from physical validity assessed through scene inspection and counterfactual checks. WorldCoder [45] evaluates an agent through downstream task performance and interaction efficiency. These outcomes should not be combined into a single cross-benchmark ranking.</p>
+<h3 id="34-data-sources">3.4 Data Sources</h3>
+<p>Finally, we categorize spatial intelligence benchmarks according to the origin of their evaluation data.</p>
+<p><strong>Real-world Data.</strong> Benchmarks constructed from real-world observations, including indoor RGB-D scans, egocentric videos, autonomous driving data, and robotic demonstrations. Such data capture realistic visual complexity, environmental variation, and sensor noise. Representative sources include ScanNet [75], ARKitScenes [76], and Ego4D [77]. NuScenes-SpatialQA [46] is a benchmark example built from real driving images and associated 3D annotations.</p>
+<p><strong>Synthetic Data.</strong> Benchmarks constructed using simulation engines or procedural scene generation. Synthetic environments provide controllable conditions and access to accurate geometric, temporal, and physical annotations. Representative benchmarks include CLEVRER [58] and PHYRE [4]. Simulated geometry and engine states can provide precise reference quantities, although they remain tied to the assumptions of the simulator.</p>
+<p><strong>Hybrid Data.</strong> Benchmarks combining real-world and synthetic environments, or augmenting real-world observations with simulation-based data and annotations. For example, S³-Bench [50] incorporates both simulated environments and real-world streaming videos, while 4DCodeBench [41] includes real reference videos and synthetic dynamic scenes. The availability of simulator state differs between these subsets and must be recorded separately.</p>
+<h2 id="4-discussion">4. Discussion</h2>
+<h3 id="41-general-progress-does-not-guarantee-spatial-competence">4.1 General Progress Does Not Guarantee Spatial Competence</h3>
+<p><strong>Strong visual QA does not guarantee spatial understanding or reliable spatial action.</strong> Spatial457 provides a direct within-model example: GPT-4o answers basic multi-object and 2D-relation questions correctly on an image, yet fails 3D-pose and 6D-relation questions about that same image [78]. Across the benchmark, its accuracy decreases from 74.46% on single-object questions to 42.41% on 3D pose and 37.01% on 6D spatial relations [78]. Agent outputs show a related limitation: PhysCodeGym reports reconstructions with perfect object and event scores that still violate physical constraints [40]. <strong>Evaluation should therefore extend beyond answers and estimates to task completion and verifiable spatial outcomes.</strong></p>
+<h3 id="42-from-answering-questions-to-acting">4.2 From Answering Questions to Acting</h3>
+<p><strong>Spatial evaluation is moving toward practical tasks that require sustained interaction or real-time responses.</strong> Streaming benchmarks examine whether models retain spatial information and respond as observations unfold [50, 60]. Agent benchmarks extend evaluation to constructing and refining executable environments, connecting spatial understanding to useful outputs [41, 40]. Together, these directions shift attention from isolated questions toward sustained performance in applications such as navigation, assistance, and scene reconstruction.</p>
+<h3 id="43-synthetic-advantages-may-not-transfer-to-real-data">4.3 Synthetic Advantages May Not Transfer to Real Data</h3>
+<p><strong>Higher synthetic performance does not guarantee a real-world advantage.</strong> In S³-Bench, Qwen3-VL-8B outperforms InternVL3.5-8B on the simulated split (41.1 versus 37.7), but their ranking reverses on the real split (39.0 versus 40.5) [50]. In 4DCodeBench, Claude Opus 5.5 [High] scores 0.88 on synthetic scenes versus 0.78 on real scenes for reconstruction VQA, and 0.92 versus 0.84 for perceptual similarity, all on a 0–1 scale [41]. When training with synthetic data, real-world validation is needed to guide data selection and verify that improvements on synthetic tasks translate into real-world gains.</p>
+<h2 id="references">References</h2>
+<p>Reference numbers [1]–[69] retain the identifiers in the shared corpus bibliography; only works cited in this draft are listed. Additional sources begin at [70]. URLs are omitted; arXiv identifiers and source titles are provided for retrieval.</p>
+<p>[4] Bakhtin, A., van der Maaten, L., Johnson, J., Gustafson, L., &amp; Girshick, R. (2019). <em>PHYRE: A New Benchmark for Physical Reasoning</em>. arXiv:1908.05656 [cs.LG], v1 (15 Aug 2019).</p>
+<p>[5] Bear, D. M., Wang, E., Mrowca, D., Binder, F., Tung, H.-Y. F., Pramod, R. T., Holdaway, C., Tao, S., Smith, K., Sun, F.-Y., Fei-Fei, L., Kanwisher, N., Tenenbaum, J. B., Yamins, D. L. K., &amp; Fan, J. (2022). <em>Physion: Evaluating Physical Prediction from Vision in Humans and Machines</em>. arXiv:2106.08261 [cs.AI], v3 (20 Jun 2022).</p>
+<p>[28] Li, H., Su, J., Li, D., Zhang, W., Lu, W., Xiao, J., Zhuang, Y., &amp; Shen, Y. (2026). <em>SpaceCast-Bench: Evaluating Predictive Spatial Reasoning in Vision-Language Models</em>. arXiv:2610.12402 [cs.CV], v1 (8 Oct 2026).</p>
+<p>[31] Li, Y., Liu, P., Zang, Y., Shi, Z., Fu, Q., Hao, H., &amp; Lu, J. (2026). <em>OVO-S-Bench: A Hierarchical Benchmark for Streaming Spatial Intelligence in Multimodal LLMs</em>. arXiv:2606.03890 [cs.CV], v2 (26 Aug 2026). EMNLP 2026.</p>
+<p>[32] Li, Y., Zhang, Y., Lin, T., Liu, X., Cai, W., Liu, Z., &amp; Zhao, B. (2025). <em>STI-Bench: Are MLLMs Ready for Precise Spatial-Temporal World Understanding?</em>. arXiv:2503.23765 [cs.CV], v6 (17 Jul 2025).</p>
+<p>[33] Lin, J., Xu, R., Zhu, S., Yang, S., Cao, P., Ran, Y., Hu, M., Zhu, C., Xie, Y., Long, Y., Hu, W., Lin, D., Wang, T., &amp; Pang, J. (2025). <em>MMSI-Video-Bench: A Holistic Benchmark for Video-Based Spatial Intelligence</em>. arXiv:2512.10863 [cs.CV], v1 (11 Dec 2025).</p>
+<p>[34] Ma, W., Chen, H., Zhang, G., Chou, Y.-C., Chen, J., de Melo, C., &amp; Yuille, A. (2025). <em>3DSRBench: A Comprehensive 3D Spatial Reasoning Benchmark</em>. arXiv:2412.07825 [cs.CV], v4 (15 Sep 2025).</p>
+<p>[40] Shao, S., He, J., Fan, C., Guo, Z., Wang, S., Ren, Q., Zhang, K., Xu, Z., Li, H., Wang, H., Lin, J., Liu, W., &amp; Zhang, W. (2026). <em>PhysCodeGym: Benchmarking Coding Agents for Physically Verifiable 4D Reconstruction</em>. arXiv:2610.17288 [cs.AI], v1 (12 Oct 2026).</p>
+<p>[41] Shen, R., Kovačič, Ž., Kulits, P., Wang, X., Li, Z., Tenenbaum, J. B., Yuille, A., Chen, J., &amp; Wu, J. (2026). <em>4DCodeBench: Benchmarking Agents on Inverse Graphics of Dynamic Scenes</em>. arXiv:2610.03715 [cs.CV], v1 (2 Oct 2026).</p>
+<p>[45] Tang, H., Key, D., &amp; Ellis, K. (2024). <em>WorldCoder, a Model-Based LLM Agent: Building World Models by Writing Code and Interacting with the Environment</em>. arXiv:2402.12275 [cs.AI], v3 (20 Sep 2024).</p>
+<p>[46] Tian, K., Mao, J., Zhang, Y., Jiang, J., Zhou, Y., &amp; Tu, Z. (2025). <em>NuScenes-SpatialQA: A Spatial Understanding and Reasoning Benchmark for Vision-Language Models in Autonomous Driving</em>. arXiv:2504.03164 [cs.CV], v2 (7 Apr 2025).</p>
+<p>[50] Wei, Y., Huang, W., Chen, Q., Hou, L., &amp; Qi, X. (2026). <em>See, Remember, Explore: A Benchmark and Baselines for Streaming Spatial Reasoning</em> (S3-Bench). arXiv:2603.23864 [cs.CV], v1 (25 Mar 2026).</p>
+<p>[58] Yi, K., Gan, C., Li, Y., Kohli, P., Wu, J., Torralba, A., &amp; Tenenbaum, J. B. (2020). <em>CLEVRER: Collision Events for Video Representation and Reasoning</em>. arXiv:1910.01442 [cs.CV], v2 (8 Mar 2020). ICLR 2020.</p>
+<p>[59] Yang, J., Yang, S., Gupta, A. W., Han, R., Fei-Fei, L., &amp; Xie, S. (2025). <em>Thinking in Space: How Multimodal Large Language Models See, Remember, and Recall Spaces</em> (VSI-Bench). arXiv:2412.14171 [cs.CV], v2 (2 Jul 2025).</p>
+<p>[60] Yu, H., Qu, X., Ke, L., Zhang, B., Wang, Y., Zhu, J., &amp; Yu, D. (2026). <em>Stream3D-VLM: Online 3D Spatial Understanding with Incremental Geometry Priors</em>. arXiv:2606.06891 [cs.CV], v1 (5 Jun 2026).</p>
+<p>[67] Zhou, S., Vilesov, A., He, X., Wan, Z., Zhang, S., Nagachandra, A., Chang, D., Chen, D., Wang, X. E., &amp; Kadambi, A. (2025). <em>VLM4D: Towards Spatiotemporal Awareness in Vision Language Models</em>. arXiv:2508.02095 [cs.CV], v2 (6 Aug 2025).</p>
+<p>[70] OpenAI. (2026). <em>GPT-6 Astra: A New Generation of Intelligence</em>. Official model announcement and evaluation table. Accessed 18 October 2026.</p>
+<p>[71] Google DeepMind. (2026). <em>Gemini: Gemini 4 Argon</em>. Official model overview and evaluation table. Accessed 18 October 2026.</p>
+<p>[72] Chen, D. Z., Chang, A. X., &amp; Nießner, M. (2020). <em>ScanRefer: 3D Object Localization in RGB-D Scans Using Natural Language</em>. ECCV 2020. arXiv:1912.08830.</p>
+<p>[73] MazeBench. (2026). <em>Introducing MazeBench</em>. Official project blog, 28 July 2026. Describes <em>Maze Bench: Visual Spatial Reasoning in a 3D Open World</em>.</p>
+<p>[74] MazeBench. (2026). <em>MazeBench Results</em>. Official project blog and evaluation-track description.</p>
+<p>[75] Dai, A., et al. (2017). <em>ScanNet: Richly-annotated 3D Reconstructions of Indoor Scenes</em>. CVPR 2017. arXiv:1702.04405.</p>
+<p>[76] Baruch, G., et al. (2021). <em>ARKitScenes: A Diverse Real-World Dataset for 3D Indoor Scene Understanding Using Mobile RGB-D Data</em>. arXiv:2111.08897.</p>
+<p>[77] Grauman, K., et al. (2022). <em>Ego4D: Around the World in 3,000 Hours of Egocentric Video</em>. CVPR 2022. arXiv:2110.07058.</p>
+<p>[78] Wang, X., Ma, W., Zhang, T., de Melo, C. M., Chen, J., &amp; Yuille, A. (2025). <em>Spatial457: A Diagnostic Benchmark for 6D Spatial Reasoning of Large Multimodal Models</em>. CVPR 2025. arXiv:2502.08636. Results and examples checked against the official project page and paper.</p>
+
+    </article>
   </main>
 </body>
 </html>
