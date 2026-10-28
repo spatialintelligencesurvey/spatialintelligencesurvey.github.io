@@ -2,7 +2,7 @@
 
 Website for *A Survey of Spatial Intelligence Benchmarks for MLLMs, VLAs, and World Models*.
 
-Published version: **v0.4.2** (29 October 2026).
+Published version: **v0.5** (29 October 2026).
 
 [Read the survey](https://spatialintelligencesurvey.github.io/).
 
