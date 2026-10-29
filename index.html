@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="A survey of spatial intelligence benchmarks for multimodal large language models, vision-language-action models, and world models.">
-<meta name="survey-version" content="v0.6">
-<meta name="source-sha256" content="86076abf046923dc4a8ee5612dcd208866155129058779dad1c114560946345c">
+<meta name="survey-version" content="v0.7">
+<meta name="source-sha256" content="339a99acbe9ea53e5f224f62aba22908ce6152686393a31de7abcc26368f62bf">
 <title>A Survey of Spatial Intelligence Benchmarks for MLLMs, VLAs, and World Models</title>
 <style>
     :root { color-scheme: light; }
@@ -71,7 +71,7 @@
 <p>City University of Hong Kong</p>
 <p class="author-note"><sup>*</sup> Work done as an intern at MirrorSpace.</p>
 </div>
-<p class="version">Version <strong>v0.6</strong></p>
+<p class="version">Version <strong>v0.7</strong></p>
 <nav aria-label="Table of contents" class="toc"><h2>Contents</h2><ul>
 <li class="depth-2"><a href="#introduction">1. Introduction</a></li>
 <li class="depth-2"><a href="#background">2. Background</a></li>
@@ -175,31 +175,303 @@ Fig. 1. Overview of the taxonomy.
 <p>An interactive environment allows models to explore, take actions, and receive new observations and feedback. These actions may change the viewpoint, reveal previously unseen regions, or alter the environment. The simulated component of S³-Bench <a class="citation" href="#ref-15">[15]</a> permits movement, rotation, and scanning to gather spatial information. PHYRE <a class="citation" href="#ref-24">[24]</a> allows models to place objects and observe the resulting physical outcomes. Navigation and manipulation environments provide subsequent observations as models move through a scene or interact with objects.</p>
 <p>For generated scenes and programs, execution provides feedback such as errors, rendered images, simulation states, and test results. 4DCodeBench <a class="citation" href="#ref-16">[16]</a>, PhysCodeGym <a class="citation" href="#ref-17">[17]</a>, and PhysCodeBench <a class="citation" href="#ref-43">[43]</a> involve generating and executing scene or simulation code. Code World Models <a class="citation" href="#ref-92">[92]</a> uses unit tests and environment trajectories to guide program search. Models can inspect these outputs and use the feedback to revise their programs.</p>
 <h2 id="spatial-capabilities">5. Spatial Capabilities</h2>
-<p>This section reviews the spatial capabilities developed in existing models and the tasks they support. We organize these capabilities into perception and understanding, memory and reasoning, and action.</p>
+<p>This section reviews the spatial capabilities developed in existing models and the tasks they support. We organize these capabilities into perception and understanding, memory and reasoning, and action. <a href="#table-1">Table 1</a>, <a href="#table-2">Table 2</a>, and <a href="#table-3">Table 3</a> summarize representative benchmarks for these three groups, including their inputs, tasks, outputs, evaluation settings, and metrics.</p>
 <h3 id="perception-and-understanding">5.1 Perception and Understanding</h3>
-<p>State recovery asks what entities are present, where they are located, and how their geometry or motion can be measured. ScanRefer <a class="citation" href="#ref-18">[18]</a> studies localization in a scan. VSI-Bench <a class="citation" href="#ref-13">[13]</a>, STI-Bench <a class="citation" href="#ref-14">[14]</a>, OSI-Bench <a class="citation" href="#ref-35">[35]</a>, and SpatialRGPT-Bench <a class="citation" href="#ref-106">[106]</a> include distance, dimensions, orientation, or motion questions. Their reference quantities may come from sensors and reconstruction even when the model receives only RGB.</p>
-<p>Spatial relation tasks ask how objects are positioned or oriented relative to each other and to a reference frame. 3DSRBench <a class="citation" href="#ref-10">[10]</a> separates height, orientation, location, and multi-object relations. Spatial457 <a class="citation" href="#ref-28">[28]</a> distinguishes simpler image relations from three-dimensional pose and six-dimensional relations. NuScenes-SpatialQA <a class="citation" href="#ref-11">[11]</a> additionally includes multi-hop questions.</p>
-<p>Cross-view integration requires observations to refer to a common environment. Models must identify the same entity, align reference frames, and preserve relations as the camera changes. Simultaneously supplied views test this integration; retaining the information after a view is no longer accessible additionally requires memory. MMSI-Bench <a class="citation" href="#ref-31">[31]</a>, SCOPE <a class="citation" href="#ref-32">[32]</a>, and CityCube <a class="citation" href="#ref-33">[33]</a> evaluate related aspects through multi-image tasks. In MMSI-Bench, GPT-5 is reported at 41.9%, while humans exceed 97% under its choice-question protocol <a class="citation" href="#ref-31">[31]</a>.</p>
+<p>Localization identifies the position or extent of a target in a specified reference frame. Counting determines the number of entities satisfying given conditions, while measurement estimates quantities such as distance, size, angle, displacement, and speed. ScanRefer <a class="citation" href="#ref-18">[18]</a> studies localization in a scan. VSI-Bench <a class="citation" href="#ref-13">[13]</a> includes counting and measurement, while STI-Bench <a class="citation" href="#ref-14">[14]</a>, OSI-Bench <a class="citation" href="#ref-35">[35]</a>, and SpatialRGPT-Bench <a class="citation" href="#ref-106">[106]</a> evaluate spatial or motion quantities. Their reference quantities may come from sensors and reconstruction even when the model receives only RGB.</p>
+<p>Relation recognition determines relative positions, orientations, or topological relations between entities or between an entity and a reference frame. 3DSRBench <a class="citation" href="#ref-10">[10]</a> separates height, orientation, location, and multi-object relations. Spatial457 <a class="citation" href="#ref-28">[28]</a> distinguishes simpler image relations from three-dimensional pose and six-dimensional relations. NuScenes-SpatialQA <a class="citation" href="#ref-11">[11]</a> additionally includes multi-hop questions.</p>
+<p>Identity recognition determines whether entities observed in different images or at different times refer to the same entity. It supports cross-view integration, which also involves aligning reference frames and combining spatial relations across observations. MMSI-Bench <a class="citation" href="#ref-31">[31]</a>, SCOPE <a class="citation" href="#ref-32">[32]</a>, and CityCube <a class="citation" href="#ref-33">[33]</a> evaluate related aspects through multi-image tasks. In MMSI-Bench, GPT-5 is reported at 41.9%, while humans exceed 97% under its choice-question protocol <a class="citation" href="#ref-31">[31]</a>.</p>
+<p id="table-1"><strong>Table 1. Representative benchmarks for perception and understanding.</strong></p>
+<div class="table-scroll" role="region" aria-label="Scrollable data table" tabindex="0"><table style="width:99%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr>
+<th>Benchmark</th>
+<th>Input</th>
+<th>Task</th>
+<th>Output</th>
+<th>Setting</th>
+<th>Metrics</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ScanRefer <a class="citation" href="#ref-18">[18]</a></td>
+<td>Point Cloud</td>
+<td>Localization</td>
+<td>Box</td>
+<td>Static</td>
+<td>Acc</td>
+</tr>
+<tr>
+<td>3DSRBench <a class="citation" href="#ref-10">[10]</a></td>
+<td>Image</td>
+<td>Relation Recognition</td>
+<td>Label</td>
+<td>Static</td>
+<td>Acc</td>
+</tr>
+<tr>
+<td>Spatial457 <a class="citation" href="#ref-28">[28]</a></td>
+<td>Image</td>
+<td>Relation Recognition</td>
+<td>Label</td>
+<td>Static</td>
+<td>Acc</td>
+</tr>
+<tr>
+<td>VSI-Bench <a class="citation" href="#ref-13">[13]</a></td>
+<td>Video</td>
+<td>Counting; Measurement</td>
+<td>Number</td>
+<td>Static</td>
+<td>Acc</td>
+</tr>
+<tr>
+<td>STI-Bench <a class="citation" href="#ref-14">[14]</a></td>
+<td>Video</td>
+<td>Measurement</td>
+<td>Label</td>
+<td>Static</td>
+<td>Acc</td>
+</tr>
+<tr>
+<td>MMSI-Bench <a class="citation" href="#ref-31">[31]</a></td>
+<td>Multiple Images</td>
+<td>Identity Recognition; Relation Recognition</td>
+<td>Label</td>
+<td>Static</td>
+<td>Acc</td>
+</tr>
+<tr>
+<td>SpatialRGPT-Bench <a class="citation" href="#ref-106">[106]</a></td>
+<td>Image (+ Depth)</td>
+<td>Measurement</td>
+<td>Number</td>
+<td>Static</td>
+<td>Acc</td>
+</tr>
+</tbody>
+</table></div>
+<p>Entries describe the evaluation tasks discussed in the corresponding subsection. Inputs omit routine questions and task instructions; parenthesized inputs depend on the evaluated configuration. Multiple task or output types are separated by semicolons. Tables 2 and 3 follow the same conventions.</p>
 <h3 id="memory-and-reasoning">5.2 Memory and Reasoning</h3>
-<p>Spatial memory tasks ask models to retain locations, layouts, and relations after they leave the current view. VSI-Bench <a class="citation" href="#ref-13">[13]</a> includes route-level questions, while LongSpace <a class="citation" href="#ref-68">[68]</a> focuses on long environment videos and recall. OpenEQA <a class="citation" href="#ref-104">[104]</a> distinguishes questions answered from observation history from questions requiring exploration; its spatial tasks are part of a broader embodied-question set. KilometerVision <a class="citation" href="#ref-105">[105]</a> extends spatial integration to long walking tours and map-related tasks, without measuring navigation execution. OVO-S-Bench <a class="citation" href="#ref-20">[20]</a> separates several levels of streaming spatial tasks, including global allocentric mapping, which is the lowest-scoring level for 32 of 38 evaluated systems in v2.</p>
+<p>Recall recovers spatial information from earlier observations, including object locations, layouts, and previous states. Transformation derives a new spatial configuration by applying specified geometric operations or operation sequences. Future prediction estimates subsequent states, motion, or events that have not been observed. Intervention reasoning infers outcomes under changed conditions, such as removing an object from a collision scene. Plausibility judgment determines whether an observed state or process is consistent with physical constraints.</p>
+<p>VSI-Bench <a class="citation" href="#ref-13">[13]</a> includes route-level questions, while LongSpace <a class="citation" href="#ref-68">[68]</a> focuses on long environment videos and recall. OpenEQA <a class="citation" href="#ref-104">[104]</a> distinguishes questions answered from observation history from questions requiring exploration; its spatial tasks are part of a broader embodied-question set. KilometerVision <a class="citation" href="#ref-105">[105]</a> extends spatial integration to long walking tours and map-related tasks, without measuring navigation execution. OVO-S-Bench <a class="citation" href="#ref-20">[20]</a> separates several levels of streaming spatial tasks, including global allocentric mapping, which is the lowest-scoring level for 32 of 38 evaluated systems in v2.</p>
 <p>Answering a recall question and generating a consistent revisit are complementary tests. MBench <a class="citation" href="#ref-36">[36]</a> evaluates memory in generated continuations, and LOCI <a class="citation" href="#ref-37">[37]</a> studies streaming world memory. A comparison across these tasks should match observed history and storage conditions, rather than attributing every gain from additional frames or true poses to the memory mechanism.</p>
 <p>Persistent spatial information must be updated when objects move, a new viewpoint resolves ambiguity, or an earlier estimate proves wrong. S³-Bench <a class="citation" href="#ref-15">[15]</a> and MemAct <a class="citation" href="#ref-69">[69]</a> connect accumulating observations with spatial questions. WorldMem <a class="citation" href="#ref-38">[38]</a> uses time conditions to distinguish states associated with different moments.</p>
-<p>Spatial transformation tasks ask how a configuration changes under rotation, movement, folding, or a change of reference frame. SpatialViz-Bench <a class="citation" href="#ref-71">[71]</a> studies spatial visualization through several geometric tasks. MentalGrid <a class="citation" href="#ref-72">[72]</a> examines initial perception, intermediate state evolution, and terminal answers, while SpaceCast-Bench <a class="citation" href="#ref-12">[12]</a> specifies scene transformations and asks about resulting relations.</p>
+<p>SpatialViz-Bench <a class="citation" href="#ref-71">[71]</a> studies spatial visualization through several geometric tasks. MentalGrid <a class="citation" href="#ref-72">[72]</a> examines initial perception, intermediate state evolution, and terminal answers, while SpaceCast-Bench <a class="citation" href="#ref-12">[12]</a> specifies scene transformations and asks about resulting relations.</p>
 <p>Some properties must be inferred from interaction rather than appearance. ComPhy <a class="citation" href="#ref-30">[30]</a> asks about hidden physical attributes and their effects on observed motion. IntPhys <a class="citation" href="#ref-29">[29]</a> uses physically possible and impossible events, while Physion <a class="citation" href="#ref-23">[23]</a> tests consequences across several physical scenarios.</p>
-<p>Future prediction withholds the target outcome. Physion <a class="citation" href="#ref-23">[23]</a> provides a video prefix and asks whether two objects will later contact. CLEVRER <a class="citation" href="#ref-22">[22]</a> includes future event questions. These tasks score an outcome judgment and can be approached through direct inference or an explicit simulation. MPMWorlds <a class="citation" href="#ref-42">[42]</a> instead fits an observed simulation prefix and evaluates its continuation on a hidden suffix. Physics-IQ <a class="citation" href="#ref-87">[87]</a> compares generated continuations with recordings of real physical experiments. Controlled physical environments also test whether video models can predict motion under new parameter ranges and combinations <a class="citation" href="#ref-91">[91]</a>.</p>
-<p>Intervention tasks specify a change and ask how its consequences differ. CLEVRER <a class="citation" href="#ref-22">[22]</a> uses event-level counterfactuals, CausalVQA <a class="citation" href="#ref-34">[34]</a> includes hypothetical variants from real video, and SpaceCast-Bench <a class="citation" href="#ref-12">[12]</a> applies specified geometric transformations. What-If World <a class="citation" href="#ref-49">[49]</a> tests intervention-conditioned generated videos.</p>
+<p>Physion <a class="citation" href="#ref-23">[23]</a> provides a video prefix and asks whether two objects will later contact. CLEVRER <a class="citation" href="#ref-22">[22]</a> includes future event questions. These tasks score an outcome judgment and can be approached through direct inference or an explicit simulation. MPMWorlds <a class="citation" href="#ref-42">[42]</a> instead fits an observed simulation prefix and evaluates its continuation on a hidden suffix. Physics-IQ <a class="citation" href="#ref-87">[87]</a> compares generated continuations with recordings of real physical experiments. Controlled physical environments also test whether video models can predict motion under new parameter ranges and combinations <a class="citation" href="#ref-91">[91]</a>.</p>
+<p>CLEVRER <a class="citation" href="#ref-22">[22]</a> uses event-level counterfactuals, CausalVQA <a class="citation" href="#ref-34">[34]</a> includes hypothetical variants from real video, and SpaceCast-Bench <a class="citation" href="#ref-12">[12]</a> applies specified geometric transformations. What-If World <a class="citation" href="#ref-49">[49]</a> tests intervention-conditioned generated videos.</p>
 <p>Executable interfaces permit variables to be changed directly. ScratchWorld <a class="citation" href="#ref-45">[45]</a> evaluates consequences of state changes in an executable setting, while PhysCodeGym <a class="citation" href="#ref-17">[17]</a> tests selected reconstructed scenes under altered forces, contacts, or initial conditions. Each evaluation must state what changed and what remained fixed. A correct response to one intervention does not establish all physical mechanisms, but paired changes can reveal failures concealed by a reconstruction of the original observation.</p>
 <p>Methods retain different content. MemAct <a class="citation" href="#ref-69">[69]</a> organizes history for streaming understanding and active exploration. WorldMem <a class="citation" href="#ref-38">[38]</a> retrieves stored image information for view generation. Spatial Memory Agent <a class="citation" href="#ref-70">[70]</a> instead stores experience-grounded procedures for solving tasks. Environment memory records what is where; procedure memory records how to approach a class of problems. Their gains should be evaluated against the content each is intended to preserve.</p>
+<p id="table-2"><strong>Table 2. Representative benchmarks for memory and reasoning.</strong></p>
+<div class="table-scroll" role="region" aria-label="Scrollable data table" tabindex="0"><table style="width:99%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr>
+<th>Benchmark</th>
+<th>Input</th>
+<th>Task</th>
+<th>Output</th>
+<th>Setting</th>
+<th>Metrics</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LongSpace-Bench <a class="citation" href="#ref-68">[68]</a></td>
+<td>Video</td>
+<td>Recall</td>
+<td>Label</td>
+<td>Static</td>
+<td>Acc</td>
+</tr>
+<tr>
+<td>SCOPE <a class="citation" href="#ref-32">[32]</a></td>
+<td>Multiple Images</td>
+<td>Transformation</td>
+<td>Label</td>
+<td>Static</td>
+<td>Acc</td>
+</tr>
+<tr>
+<td>SpatialViz-Bench <a class="citation" href="#ref-71">[71]</a></td>
+<td>Image</td>
+<td>Transformation</td>
+<td>Label</td>
+<td>Static</td>
+<td>Acc</td>
+</tr>
+<tr>
+<td>MentalGrid <a class="citation" href="#ref-72">[72]</a></td>
+<td>Image + Action Sequence</td>
+<td>Transformation</td>
+<td>Label; Number</td>
+<td>Static</td>
+<td>Acc</td>
+</tr>
+<tr>
+<td>Physion <a class="citation" href="#ref-23">[23]</a></td>
+<td>Video</td>
+<td>Future Prediction</td>
+<td>Label</td>
+<td>Static</td>
+<td>Acc</td>
+</tr>
+<tr>
+<td>CLEVRER <a class="citation" href="#ref-22">[22]</a></td>
+<td>Video</td>
+<td>Future Prediction; Intervention Reasoning</td>
+<td>Label</td>
+<td>Static</td>
+<td>Acc</td>
+</tr>
+<tr>
+<td>IntPhys <a class="citation" href="#ref-29">[29]</a></td>
+<td>Video</td>
+<td>Plausibility Judgment</td>
+<td>Score</td>
+<td>Static</td>
+<td>Acc</td>
+</tr>
+<tr>
+<td>Physics-IQ <a class="citation" href="#ref-87">[87]</a></td>
+<td>Video</td>
+<td>Future Prediction</td>
+<td>Video</td>
+<td>Static</td>
+<td>Acc</td>
+</tr>
+</tbody>
+</table></div>
 <h3 id="action">5.3 Action</h3>
+<p>Navigation selects or executes movement actions to reach a specified destination. Manipulation selects or executes actions that change object configurations to satisfy a task goal. Active exploration chooses observations or interactions to acquire information needed for a task. World construction creates a scene, map, geometric model, or executable environment from observations or requirements. World revision modifies an existing world representation using new observations, requirements, or feedback.</p>
 <p>Spatial grounding connects instructions with entities, locations, and target configurations. A robot must identify both the intended object and the spatial condition to satisfy. Spa-Bench <a class="citation" href="#ref-76">[76]</a> uses real-robot tasks and matched instruction controls to distinguish relational grounding from the remaining manipulation problem. ESI-Bench <a class="citation" href="#ref-75">[75]</a> connects spatial judgments with interaction in a simulated environment. More complex instructions combine visual-semantic knowledge with spatial relations, such as selecting the object above a named visual entity <a class="citation" href="#ref-107">[107]</a>.</p>
-<p>Navigation and manipulation require spatial information to support feasible actions. SayCan <a class="citation" href="#ref-73">[73]</a> combines language-based proposals with skill feasibility, while VoxPoser <a class="citation" href="#ref-74">[74]</a> constructs three-dimensional value maps for motion planning. VLAs such as RT-2 <a class="citation" href="#ref-56">[56]</a>, OpenVLA <a class="citation" href="#ref-57">[57]</a>, and π0 <a class="citation" href="#ref-58">[58]</a> learn action generation from demonstrations. Video-model features can also support action generation for tasks seen in training videos but absent from action demonstrations <a class="citation" href="#ref-108">[108]</a>. LIBERO <a class="citation" href="#ref-94">[94]</a>, CALVIN <a class="citation" href="#ref-95">[95]</a>, and RoboCasa <a class="citation" href="#ref-96">[96]</a> provide different environments and task structures for evaluating execution.</p>
-<p>Active evidence acquisition asks which observation or interaction would reduce uncertainty. The simulated component of S³-Bench <a class="citation" href="#ref-15">[15]</a> allows movement, rotation, and scanning, whereas its real-video component follows fixed trajectories. MemAct <a class="citation" href="#ref-69">[69]</a> combines remembered information with active camera exploration. Mine Odyssey <a class="citation" href="#ref-78">[78]</a> extends evaluation to long-horizon spatial agent tasks in an interactive world.</p>
-<p>Scene reconstruction externalizes spatial understanding as geometry, a digital twin, or an executable world. 4DCodeBench <a class="citation" href="#ref-16">[16]</a> reconstructs dynamic scenes from reference videos and evaluates appearance, geometry, trajectories, and events. Vid2Sim <a class="citation" href="#ref-40">[40]</a> and PhysTwin <a class="citation" href="#ref-41">[41]</a> recover geometric and physical representations from captured observations under their respective object and material assumptions.</p>
+<p>SayCan <a class="citation" href="#ref-73">[73]</a> combines language-based proposals with skill feasibility, while VoxPoser <a class="citation" href="#ref-74">[74]</a> constructs three-dimensional value maps for motion planning. VLAs such as RT-2 <a class="citation" href="#ref-56">[56]</a>, OpenVLA <a class="citation" href="#ref-57">[57]</a>, and π0 <a class="citation" href="#ref-58">[58]</a> learn action generation from demonstrations. Video-model features can also support action generation for tasks seen in training videos but absent from action demonstrations <a class="citation" href="#ref-108">[108]</a>. LIBERO <a class="citation" href="#ref-94">[94]</a>, CALVIN <a class="citation" href="#ref-95">[95]</a>, and RoboCasa <a class="citation" href="#ref-96">[96]</a> provide different environments and task structures for evaluating execution.</p>
+<p>The simulated component of S³-Bench <a class="citation" href="#ref-15">[15]</a> allows movement, rotation, and scanning, whereas its real-video component follows fixed trajectories. MemAct <a class="citation" href="#ref-69">[69]</a> combines remembered information with active camera exploration. Mine Odyssey <a class="citation" href="#ref-78">[78]</a> extends evaluation to long-horizon spatial agent tasks in an interactive world.</p>
+<p>4DCodeBench <a class="citation" href="#ref-16">[16]</a> reconstructs dynamic scenes from reference videos and evaluates appearance, geometry, trajectories, and events. Vid2Sim <a class="citation" href="#ref-40">[40]</a> and PhysTwin <a class="citation" href="#ref-41">[41]</a> recover geometric and physical representations from captured observations under their respective object and material assumptions.</p>
 <p>Executable representations express scenes or transition rules as programs. A scene program can construct objects and constraints; an animation program can specify trajectories; a simulator configuration can provide geometry and physical parameters; and a transition program can implement the effect of actions. Their expressiveness overlaps, but the behavior they encode differs.</p>
 <p>Executable construction may begin from observations, textual requirements, or interaction traces. PhysCodeBench <a class="citation" href="#ref-43">[43]</a> supplies simulation specifications and engine documentation. ExeWorldBench <a class="citation" href="#ref-44">[44]</a> includes construction tasks at different levels of abstraction.</p>
 <p>WorldCoder <a class="citation" href="#ref-19">[19]</a> and Code World Models <a class="citation" href="#ref-92">[92]</a> generate environment rules that planners can call. Code2Worlds <a class="citation" href="#ref-93">[93]</a> constructs simulation code from language and refines rendered dynamics through feedback. 4DCodeBench <a class="citation" href="#ref-16">[16]</a> instead evaluates reconstruction from reference videos. These works connect program synthesis with spatial modeling through different tasks and supervision.</p>
 <p>The Code World Models benchmark <a class="citation" href="#ref-92">[92]</a> includes 18 environments with descriptions and trajectories. Evaluation should identify whether a program is expected to reproduce appearance, construct a mechanism, predict transitions, or support a planner.</p>
-<p>Model revision incorporates new observations or feedback into a constructed world. WorldCoder <a class="citation" href="#ref-19">[19]</a> updates transition programs after interaction. PACE-Bench <a class="citation" href="#ref-46">[46]</a> evaluates code adaptation when physical conditions change, while PhysCodeGym <a class="citation" href="#ref-17">[17]</a> includes execution and physical inspection of reconstructed scenes.</p>
+<p>WorldCoder <a class="citation" href="#ref-19">[19]</a> updates transition programs after interaction. PACE-Bench <a class="citation" href="#ref-46">[46]</a> evaluates code adaptation when physical conditions change, while PhysCodeGym <a class="citation" href="#ref-17">[17]</a> includes execution and physical inspection of reconstructed scenes.</p>
+<p id="table-3"><strong>Table 3. Representative benchmarks for action.</strong></p>
+<div class="table-scroll" role="region" aria-label="Scrollable data table" tabindex="0"><table style="width:99%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr>
+<th>Benchmark</th>
+<th>Input</th>
+<th>Task</th>
+<th>Output</th>
+<th>Setting</th>
+<th>Metrics</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VCN-Bench <a class="citation" href="#ref-79">[79]</a></td>
+<td>Video + Image</td>
+<td>Navigation</td>
+<td>Action</td>
+<td>Interactive</td>
+<td>Acc</td>
+</tr>
+<tr>
+<td>LIBERO <a class="citation" href="#ref-94">[94]</a></td>
+<td>Image (+ State)</td>
+<td>Manipulation</td>
+<td>Action</td>
+<td>Interactive</td>
+<td>Acc</td>
+</tr>
+<tr>
+<td>CALVIN <a class="citation" href="#ref-95">[95]</a></td>
+<td>Image (+ State)</td>
+<td>Manipulation</td>
+<td>Action</td>
+<td>Interactive</td>
+<td>Acc</td>
+</tr>
+<tr>
+<td>RoboCasa <a class="citation" href="#ref-96">[96]</a></td>
+<td>Image (+ State)</td>
+<td>Manipulation</td>
+<td>Action</td>
+<td>Interactive</td>
+<td>Acc</td>
+</tr>
+<tr>
+<td>Spa-Bench <a class="citation" href="#ref-76">[76]</a></td>
+<td>Image (+ State)</td>
+<td>Manipulation</td>
+<td>Action</td>
+<td>Interactive</td>
+<td>Acc</td>
+</tr>
+<tr>
+<td>PHYRE <a class="citation" href="#ref-24">[24]</a></td>
+<td>Image</td>
+<td>Manipulation</td>
+<td>Action</td>
+<td>Interactive</td>
+<td>Acc</td>
+</tr>
+<tr>
+<td>S³-Bench <a class="citation" href="#ref-15">[15]</a></td>
+<td>Image</td>
+<td>Active Exploration</td>
+<td>Action; Label</td>
+<td>Interactive</td>
+<td>Acc</td>
+</tr>
+<tr>
+<td>4DCodeBench <a class="citation" href="#ref-16">[16]</a></td>
+<td>Video</td>
+<td>World Construction</td>
+<td>Code</td>
+<td>Interactive</td>
+<td>Acc</td>
+</tr>
+<tr>
+<td>PhysCodeBench <a class="citation" href="#ref-43">[43]</a></td>
+<td>Text</td>
+<td>World Construction</td>
+<td>Code</td>
+<td>Interactive</td>
+<td>Acc</td>
+</tr>
+<tr>
+<td>PACE-Bench <a class="citation" href="#ref-46">[46]</a></td>
+<td>Code + Text</td>
+<td>World Revision</td>
+<td>Code</td>
+<td>Interactive</td>
+<td>Acc</td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="evaluation">6. Evaluation</h2>
 <p>Evaluation protocols determine what information is available to the model, which metrics are used, and what capabilities are evaluated. In this section, we review evaluation settings, outputs, metrics, and reliability.</p>
 <h3 id="evaluation-settings">6.1 Evaluation Settings</h3>
@@ -215,19 +487,20 @@ Fig. 1. Overview of the taxonomy.
 <p>Protocols should specify what is reset between trials and what carries over. Hidden-future targets must be excluded from generation and candidate selection. Controlled reruns should record changed variables, and revision tests should identify the new evidence. Interaction budgets include observations, environment steps, candidate programs, and execution time.</p>
 <p>The value of exploration depends on both acquired information and its cost. Evaluation should report whether the chosen action reveals necessary evidence, how many actions are used, and whether the final task is completed. WorldCoder <a class="citation" href="#ref-19">[19]</a> and PHYRE <a class="citation" href="#ref-24">[24]</a> provide related settings in which action outcomes inform later choices, although successful trial-and-error need not imply an explicit learned dynamics model.</p>
 <h3 id="evaluation-outputs">6.2 Evaluation Outputs</h3>
-<p>Answers may be multiple-choice, free-form, numerical, or structured. A relation answer exposes a conclusion, whereas a coordinate or pose exposes an estimate that can be checked more directly. Scene graphs, trajectories, and maps additionally expose relationships across entities or time. The evaluator should score the requested quantities rather than treating all outputs as generic text <a class="citation" href="#ref-11">[11]</a>, <a class="citation" href="#ref-13">[13]</a>, <a class="citation" href="#ref-14">[14]</a>.</p>
+<p>Evaluation outputs include discrete labels, numerical values, bounding boxes, scores, actions, videos, and code. A label expresses a categorical judgment or selected answer, while a number reports a quantitative estimate. A bounding box specifies a target region or volume. A score expresses a model’s confidence or assessment, such as the plausibility of an observed process. These forms distinguish selecting a relation from estimating a distance or localizing an object <a class="citation" href="#ref-13">[13]</a>, <a class="citation" href="#ref-18">[18]</a>, <a class="citation" href="#ref-29">[29]</a>.</p>
 <p>A plan states intended steps; an action output specifies a control or command. Offline action matching can test agreement with a recorded sequence, while environmental execution tests its actual consequences. The available controller, action normalization, execution frequency, and use of intermediate goals should accompany reported results <a class="citation" href="#ref-56">[56]</a>, <a class="citation" href="#ref-58">[58]</a>, <a class="citation" href="#ref-61">[61]</a>, <a class="citation" href="#ref-63">[63]</a>.</p>
 <p>Generated video exposes future or revisited observations. Geometry, digital twins, and programs expose different amounts of structure. Vid2Sim <a class="citation" href="#ref-40">[40]</a> and PhysTwin <a class="citation" href="#ref-41">[41]</a> recover parameterized models, while 4DCodeBench <a class="citation" href="#ref-16">[16]</a> and PhysCodeGym <a class="citation" href="#ref-17">[17]</a> require executable scenes. The evaluation should follow the properties actually inspected: appearance, geometry, state, transitions, or response to changed conditions.</p>
 <p>Reconstruction provides a reusable artifact, but its validation should follow its intended use. Matching an observed trajectory tests fitting. Held-out views test additional geometry, while hidden futures or new interactions test behavior beyond the fitting observations. These settings should be reported separately even when they use the same recovered scene.</p>
 <p>For code-to-3D and code-to-video systems, the generated artifact should therefore be examined directly. Correct scene layout, a prescribed animation, and a model that responds correctly to new conditions are distinct achievements. When an external engine supplies physical dynamics, the learned contribution may lie in recovering the scene, selecting mechanisms, or estimating parameters. That contribution should be evaluated alongside the resulting simulation.</p>
 <p>Revision should be evaluated through both correction and retention. A repaired program may run while still encoding an incorrect trajectory, and a changed parameter may improve a new observation while damaging earlier fits. Reporting the new evidence, edited components, retained behavior, and revision cost helps distinguish syntax repair from updating an environment model.</p>
 <h3 id="evaluation-metrics">6.3 Evaluation Metrics</h3>
-<p>Spatial accuracy includes relation correctness, numerical error, localization, pose error, and geometric reconstruction. VSI-Bench <a class="citation" href="#ref-13">[13]</a> separates numerical MRA from choice accuracy. CLEVRER <a class="citation" href="#ref-22">[22]</a> reports both per-option and stricter per-question scores. These quantities should retain their definitions and should not be averaged across benchmarks as one spatial-intelligence percentage.</p>
-<p>The answer format also matters. A qualitative relation, a distance interval, and a continuous estimate are different targets. VSI-Bench uses numerical MRA and choice accuracy for different questions. STI-Bench v6 reports Gemini-2.5-Pro at 41.4% on five-way questions <a class="citation" href="#ref-14">[14]</a>; this measures option selection under that protocol rather than continuous metric calibration.</p>
+<p>Localization is commonly evaluated through overlap with a reference region. ScanRefer <a class="citation" href="#ref-18">[18]</a> reports localization accuracy at 3D IoU thresholds of 0.25 and 0.5. Numerical tasks use different scoring rules: VSI-Bench <a class="citation" href="#ref-13">[13]</a> evaluates counting and measurement with mean relative accuracy, which averages correctness across relative-error thresholds, while its multiple-choice tasks use answer accuracy.</p>
+<p>Relation judgments and event predictions are often evaluated through answer accuracy. CLEVRER <a class="citation" href="#ref-22">[22]</a> reports both per-option accuracy and the stricter per-question accuracy, which requires all option judgments for a question to be correct. STI-Bench v6 evaluates numerical spatial and motion questions through five-way answer selection; its reported Gemini-2.5-Pro score of 41.4% therefore measures option-selection accuracy <a class="citation" href="#ref-14">[14]</a>.</p>
 <p>Temporal consistency measures whether identities, locations, and state changes remain coherent across observations or generated frames. For video generation, subject consistency and alignment with the input image assess whether generated frames preserve the depicted entities and input content. Both improve when point-tracking supervision is added to a video diffusion model <a class="citation" href="#ref-82">[82]</a>. Tracking error and revisit consistency examine whether the same entity or place is maintained; MBench <a class="citation" href="#ref-36">[36]</a> evaluates persistence in generated content. Recall accuracy tests the accessibility of stored information and can complement consistency measures. Memory results should be accompanied by observed duration, revisit interval, storage, and historical access.</p>
 <p>Updating can be evaluated through both new and previously established information. A model should incorporate the changed object while retaining unaffected relations. Final-answer accuracy alone may hide failures of entity binding or stale state. Tests that identify what changed, when it was observed, and which earlier facts should remain valid provide more direct evidence of state maintenance.</p>
-<p>Prediction metrics should correspond to hidden events, future states, or action-conditioned trajectories. Physion <a class="citation" href="#ref-23">[23]</a> uses future contact, Physics-IQ <a class="citation" href="#ref-87">[87]</a> compares physical continuations, and MPMWorlds <a class="citation" href="#ref-42">[42]</a> evaluates a hidden suffix. Image similarity can supplement these targets, but may include background and decoder effects that are weakly related to an action-critical state.</p>
-<p>Action evaluation includes success, path efficiency, attempts, contact accuracy, and time. PHYRE <a class="citation" href="#ref-24">[24]</a> uses success under an attempt budget. Navigation can report both reaching the goal and path efficiency. Robot suites measure task or sequence completion, but their environments, control interfaces, and training access differ <a class="citation" href="#ref-94">[94]</a>, <a class="citation" href="#ref-95">[95]</a>, <a class="citation" href="#ref-96">[96]</a>.</p>
+<p>Future prediction can be evaluated through event judgments or generated continuations. Physion <a class="citation" href="#ref-23">[23]</a> measures whether models correctly predict future contact. Physics-IQ <a class="citation" href="#ref-87">[87]</a> compares generated continuations with recorded physical experiments using spatial IoU, spatiotemporal IoU, weighted spatial IoU, and mean squared error. These metrics capture where motion occurs, its temporal progression, and differences from the recorded continuation. MPMWorlds <a class="citation" href="#ref-42">[42]</a> similarly evaluates continuation on a hidden suffix after an observed prefix.</p>
+<p>Action benchmarks evaluate whether execution achieves the task goal. LIBERO <a class="citation" href="#ref-94">[94]</a> and RoboCasa <a class="citation" href="#ref-96">[96]</a> report task success rates, while CALVIN <a class="citation" href="#ref-95">[95]</a> evaluates completion of consecutive language-conditioned tasks. PHYRE <a class="citation" href="#ref-24">[24]</a> reports AUCCESS, which aggregates success over an attempt budget and gives greater weight to solving tasks with fewer attempts. These measures distinguish successful execution from agreement with a recorded action.</p>
+<p>World construction is evaluated through both the generated artifact and its behavior. 4DCodeBench <a class="citation" href="#ref-16">[16]</a> uses DINOv3 similarity for perceptual fidelity, Dynamic IoU for moving-object coverage, and depth error for recovered geometry. Where reference 3D states are available, it additionally evaluates Chamfer distance and trajectory alignment. PhysCodeBench <a class="citation" href="#ref-43">[43]</a> reports code-execution and artifact checks, visual scores, and the proportion of executable physical assertions passed. For revision, PACE-Bench <a class="citation" href="#ref-46">[46]</a> reports Pass@2, the proportion of environment pairs solved in at least one of two runs, and Score@2, the mean of the two run-best scores.</p>
 <p>Offline action scores should remain distinct from execution. The JEPA study <a class="citation" href="#ref-89">[89]</a>, for example, uses an offline action score on DROID alongside success rates in other environments. Similarly, the inference time of one dynamics call is not the latency of a planner that evaluates many candidate sequences. Both outcome and computation belong in deployment-oriented evaluation.</p>
 <h3 id="evaluation-reliability">6.4 Evaluation Reliability</h3>
 <p>Performance depends on supplied information and computation. True geometry, estimated geometry, robot state, historical frames, goal images, and oracle execution can each change a task. Reports should identify which are available to the model, which supervise training, and which are reserved for scoring.</p>
